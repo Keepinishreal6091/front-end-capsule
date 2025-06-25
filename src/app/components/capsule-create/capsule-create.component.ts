@@ -42,8 +42,8 @@ messageInput = '';
     console.log('Submitting Capsule: ', formattedCapsule);
 
     this.capsuleService.createCapsule(formattedCapsule).subscribe(() => {
-      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-        this.router.navigate(['/']);
+      this.router.navigateByUrl('/home', { skipLocationChange: true }).then(() => {
+        this.router.navigate(['/home']);
       });
     });
   }

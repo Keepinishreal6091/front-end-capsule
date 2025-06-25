@@ -23,7 +23,7 @@ export class LoginComponent {
     this.userService.login({ username: this.username, password: this.password }).subscribe({
       next: () => {
         localStorage.setItem('username', this.username);
-        this.router.navigate(['/']);
+        this.router.navigate(['/home']);
       },
       error: () => {
         this.errorMessage = 'Invalid username or password.';
