@@ -1,2 +1,27 @@
-<h1> {{title}} </h1>
+<h1>{{ title }}</h1>
+
+<nav style="margin-bottom: 1rem;">
+  <!-- When user is logged in -->
+  <ng-container *ngIf="authService.isLoggedIn(); else loggedOut">
+    <p>
+      Welcome, {{ authService.getUsername() }}!
+      <button (click)="logout()">Logout</button>
+    </p>
+    <a routerLink="/">Home</a>
+    <a routerLink="/create">New Capsule</a>
+  </ng-container>
+
+  <ng-container *ngIf="authService.isLoggedIn()">
+    <app-navigation-bar></app-navigation-bar>
+  </ng-container>
+
+  <router-outlet></router-outlet>
+
+  <!-- When user is logged out -->
+  <ng-template #loggedOut>
+    <a routerLink="/login">Login</a>
+    <a routerLink="/register">Register</a>
+  </ng-template>
+</nav>
+
 <router-outlet></router-outlet>
