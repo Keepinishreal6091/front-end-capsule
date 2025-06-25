@@ -4,10 +4,12 @@ import { CapsuleCreateComponent } from './components/capsule-create/capsule-crea
 import { CapsuleDetailComponent } from './capsule-detail/capsule-detail.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
+import { LandingComponent } from './pages/landing.component';
 
 
 export const routes: Routes = [
-  { path: '', component: CapsuleListComponent },
+  { path: '', component: LandingComponent },
+  { path: 'home', component: CapsuleListComponent },
   { path: 'create', component: CapsuleCreateComponent },
    { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
