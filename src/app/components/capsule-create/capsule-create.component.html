@@ -1,0 +1,26 @@
+<div class = "container mt-4">
+  <h2>Create New Time Capsule</h2>
+
+  <form (ngSubmit)="saveCapsule()">
+    <div class="mb-3">
+      <label for="title" class="form-label">Title:</label>
+      <input id="title" class="form-control" [(ngModel)]="capsule.title" name="title" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="message" class="form-label">Message:</label>
+      <textarea id="message" class="form-control" [(ngModel)]="messageInput" name="message" required></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label for="unlockDate" class="form-label">Unlock Date:</label>
+      <input id="unlockDate" type="date" class="form-control" [(ngModel)]="capsule.unlockDate" name="unlockDate" required>
+    </div>
+
+    <button type="submit" class="btn btn-success"> Save Capsule</button>
+  </form>
+
+  <div class="mt-3">
+    <a routerLink="/" class="btn btn-secondary"> Back to Capsules </a>
+  </div>
+</div>

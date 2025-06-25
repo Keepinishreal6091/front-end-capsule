@@ -1,0 +1,42 @@
+<div class="container mt-4">
+  <h2>Time Capsules</h2>
+
+  <button class="btn btn-secondary mb-3" (click)="toggleList()">
+    {{ showList ? 'Hide Capsules' : 'Show Capsules' }}
+  </button>
+
+  <ul *ngIf="showList" class="list-group">
+    <li
+      class="list-group-item d-flex justify-content-between align-items-start"
+      *ngFor="let capsule of capsules"
+    >
+      <div class="capsule-card">
+        <h2>
+          <a [routerLink]="['/capsules', capsule.id]" style="text-decoration: none;">
+            {{ capsule.title }}
+          </a>
+        </h2>
+
+        <p class="text-muted" style="font-size: 0.9rem;">
+          Created: {{ capsule.createdAt | date:'medium' }}
+        </p>
+
+        <p *ngIf="isUnlocked(capsule.unlockDate) && capsule.messages.length > 0; else lockedMsg">
+          {{ capsule.messages[0]?.text }}
+        </p>
+
+        <ng-template #lockedMsg>
+          <p><em>🔒 Unlocks on {{ capsule.unlockDate | date: 'longDate' }}</em></p>
+        </ng-template>
+      </div>
+
+      <button class="btn btn-danger btn-sm" (click)="deleteCapsule(capsule.id)">
+        Delete
+      </button>
+    </li>
+  </ul>
+
+  <div class="mt-4">
+    <a routerLink="/create" class="btn btn-primary">Create New Capsule</a>
+  </div>
+</div>
