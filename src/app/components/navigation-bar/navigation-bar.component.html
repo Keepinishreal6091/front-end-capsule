@@ -1,0 +1,14 @@
+<nav class="nav-bar">
+  <ng-container *ngIf="authService.isLoggedIn(); else guestLinks">
+    <a routerLink="/home" routerLinkActive="active">Home</a>
+    <a routerLink="/my-capsules" routerLinkActive="active">My Capsules</a>
+    <a href="#" class="disabled">Friends</a>
+    <span class="spacer"></span>
+    <button (click)="logout()">Logout ({{ username }})</button>
+  </ng-container>
+
+  <ng-template #guestLinks>
+    <a routerLink="/login" routerLinkActive="active">Login</a>
+    <a routerLink="/register" routerLinkActive="active">Register</a>
+  </ng-template>
+</nav>
