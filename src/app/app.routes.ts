@@ -16,5 +16,6 @@ export const routes: Routes = [
   { path: 'create', component: CapsuleCreateComponent, canActivate: [authGuard] },
    { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
-  { path: 'capsules/:id', component: CapsuleDetailComponent, canActivate: [authGuard] }
+  { path: 'capsules/:id', component: CapsuleDetailComponent, canActivate: [authGuard] },
+  { path: '**', redirectTo: '' }
   ];

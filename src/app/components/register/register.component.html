@@ -1,17 +1,22 @@
 <div class="container mt-4">
   <h2>Register</h2>
-  <form (ngSubmit)="registerUser()">
+  <form #registerForm="ngForm" (ngSubmit)="registerUser()" aria-busy="{{ submitting }}">
     <div class="mb-3">
       <label for="username">Username</label>
       <input [(ngModel)]="username" name="username" id="username" class="form-control" required />
     </div>
     <div class="mb-3">
       <label for="password">Password</label>
-      <input [(ngModel)]="password" name="password" id="password" type="password" class="form-control" required />
+      <input [(ngModel)]="password" name="password" id="password" type="password" class="form-control" minlength="8" required />
     </div>
-    <button type="submit" class="btn btn-primary">Register</button>
-    <p class="mt-2 text-success" *ngIf="successMessage">{{ successMessage }}</p>
-    <p class="mt-2 text-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid || submitting">
+      {{ submitting ? 'Creating account…' : 'Register' }}
+    </button>
+    @if (successMessage) {
+      <p class="mt-2 text-success">{{ successMessage }}</p>
+    }
+    @if (errorMessage) {
+      <p class="mt-2 text-danger" role="alert">{{ errorMessage }}</p>
+    }
   </form>
 </div>
-

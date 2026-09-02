@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, switchMap } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { SessionResponse } from './auth.service';
+import { CsrfService } from './csrf.service';
 
 export interface User {
-  id?: number;
   username: string;
   password: string;
 }
@@ -12,18 +14,19 @@ export interface User {
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:9090/api/users';
+  private readonly apiUrl = `${environment.apiUrl}/api/auth`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private csrf: CsrfService) {}
 
-login(user: { username: string; password: string }) {
-  console.log('Sending login request with:', user);
-  return this.http.post('http://localhost:9090/api/users/login', user, {
-    responseType: 'text'
-  });
-}
+  login(user: User): Observable<SessionResponse> {
+    return this.csrf.ensureToken().pipe(
+      switchMap(() => this.http.post<SessionResponse>(`${this.apiUrl}/login`, user))
+    );
+  }
 
-  register(user: { username: string; password: string }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, user);
+  register(user: User): Observable<SessionResponse> {
+    return this.csrf.ensureToken().pipe(
+      switchMap(() => this.http.post<SessionResponse>(`${this.apiUrl}/register`, user))
+    );
   }
 }

@@ -1,42 +1,25 @@
-<div class="container mt-4">
-  <h2>Time Capsules</h2>
-
-  <button class="btn btn-secondary mb-3" (click)="toggleList()">
-    {{ showList ? 'Hide Capsules' : 'Show Capsules' }}
-  </button>
-
-  <ul *ngIf="showList" class="list-group">
-    <li
-      class="list-group-item d-flex justify-content-between align-items-start"
-      *ngFor="let capsule of capsules"
-    >
-      <div class="capsule-card">
-        <h2>
-          <a [routerLink]="['/capsules', capsule.id]" style="text-decoration: none;">
-            {{ capsule.title }}
-          </a>
-        </h2>
-
-        <p class="text-muted" style="font-size: 0.9rem;">
-          Created: {{ capsule.createdAt | date:'medium' }}
-        </p>
-
-        <p *ngIf="isUnlocked(capsule.unlockDate) && capsule.messages.length > 0; else lockedMsg">
-          {{ capsule.messages[0]?.text }}
-        </p>
-
-        <ng-template #lockedMsg>
-          <p><em>🔒 Unlocks on {{ capsule.unlockDate | date: 'longDate' }}</em></p>
-        </ng-template>
-      </div>
-
-      <button class="btn btn-danger btn-sm" (click)="deleteCapsule(capsule.id)">
-        Delete
-      </button>
-    </li>
+<div class="container mt-4" [attr.aria-busy]="loading">
+  <h2>My Capsules</h2>
+  <a routerLink="/create" class="btn btn-primary mb-3">Create a Capsule</a>
+  <button class="btn btn-secondary mb-3 ms-2" (click)="loadCapsules()" [disabled]="loading">Refresh</button>
+  @if (loading) { <p role="status">Loading capsules…</p> }
+  @if (errorMessage) { <p role="alert" class="text-danger">{{ errorMessage }}</p> }
+  @if (!loading && !errorMessage && capsules.length === 0) { <p>You have no capsules yet. Write a message for your future self.</p> }
+  <ul class="list-group">
+    @for (capsule of capsules; track capsule.id) {
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <div>
+          <h3><a [routerLink]="['/capsules', capsule.id]">{{ capsule.title }}</a></h3>
+          <p>Created {{ capsule.createdAt | date:'medium' }}</p>
+          @if (capsule.locked) {
+            <p>🔒 Unlocks {{ capsule.unlockAt | date:'medium' }} (your local time)</p>
+          } @else {
+            <p>Unlocked</p>
+            @for (message of capsule.messages; track $index) { <p>{{ message.text }}</p> }
+          }
+        </div>
+        <button class="btn btn-danger" (click)="deleteCapsule(capsule.id)" [disabled]="deletingId !== null">{{ deletingId === capsule.id ? 'Deleting…' : 'Delete' }}</button>
+      </li>
+    }
   </ul>
-
-  <div class="mt-4">
-    <a routerLink="/create" class="btn btn-primary">Create New Capsule</a>
-  </div>
 </div>

@@ -1,14 +1,15 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
@@ -17,25 +18,30 @@ export class RegisterComponent {
   password = '';
   successMessage = '';
   errorMessage = '';
+  submitting = false;
 
-  constructor(private userService: UserService, private router: Router) {}
+  constructor(
+    private userService: UserService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   registerUser() {
-    console.log('Registering:', this.username);
-
+    if (this.submitting || !this.username.trim() || this.password.length < 8) return;
+    this.submitting = true;
+    this.errorMessage = '';
     this.userService.register({ username: this.username, password: this.password }).subscribe({
-      next: (response: any) => {
-        console.log('Registration success:', response);
-        this.successMessage = response.message || 'Registration successful!';
-        this.router.navigate(['/login']);
+      next: response => {
+        this.authService.acceptSession(response);
+        this.router.navigate(['/home']);
       },
       error: (err: HttpErrorResponse) => {
-        console.error('Registration error:', err);
-        if (err.status === 400 && err.error?.error === 'Username already taken') {
+        if (err.status === 409) {
           this.errorMessage = 'Username already taken.';
         } else {
-          this.errorMessage = 'An unexpected error occurred.';
+          this.errorMessage = 'Registration failed. Check the form and try again.';
         }
+        this.submitting = false;
       }
     });
   }

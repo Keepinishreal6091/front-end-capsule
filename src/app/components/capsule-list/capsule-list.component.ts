@@ -12,32 +12,28 @@ import { RouterModule } from '@angular/router';
 })
 export class CapsuleListComponent implements OnInit {
   capsules: Capsule[] = [];
-  showList = true;
+  loading = true;
+  errorMessage = '';
+  deletingId: number | null = null;
 
   constructor(private capsuleService: CapsuleService) {}
+  ngOnInit(): void { this.loadCapsules(); }
 
-  ngOnInit() {
-    this.loadCapsules();
-  }
-
-  loadCapsules() {
-    this.capsuleService.getAllCapsules().subscribe(data => {
-      this.capsules = data;
+  loadCapsules(): void {
+    this.loading = true;
+    this.errorMessage = '';
+    this.capsuleService.getAllCapsules().subscribe({
+      next: data => { this.capsules = data; this.loading = false; },
+      error: () => { this.loading = false; this.errorMessage = 'Capsules could not be loaded. Please retry.'; }
     });
   }
 
-  toggleList() {
-    this.showList = !this.showList;
+  deleteCapsule(id: number): void {
+    if (this.deletingId !== null || !confirm('Permanently delete this capsule?')) return;
+    this.deletingId = id;
+    this.capsuleService.deleteCapsule(id).subscribe({
+      next: () => { this.capsules = this.capsules.filter(capsule => capsule.id !== id); this.deletingId = null; },
+      error: () => { this.deletingId = null; this.errorMessage = 'Capsule could not be deleted. Please retry.'; }
+    });
   }
-
-  deleteCapsule(id: number) {
-    if (confirm('Are you sure you want to delete this capsule?')) {
-      this.capsuleService.deleteCapsule(id).subscribe(() => {
-        this.loadCapsules(); // Refresh list after deletion
-      });
-    }
-  }
-isUnlocked(unlockDate: string): boolean {
-  return new Date() >= new Date(unlockDate);
-}
 }

@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface CapsuleMessage {
   text: string;
@@ -11,22 +12,20 @@ export interface Capsule {
   id: number;
   title: string;
   messages: CapsuleMessage[];
-  unlockDate: string;
+  unlockAt: string;
   createdAt: string;
+  locked: boolean;
 }
 
 export interface NewCapsule {
   title: string;
-  messages: CapsuleMessage[];
-  unlockDate: string;
+  messages: Array<{ text: string }>;
+  unlockAt: string;
 }
 
-
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class CapsuleService {
-  private apiUrl = 'http://localhost:9090/api/capsules';
+  private readonly apiUrl = `${environment.apiUrl}/api/capsules`;
 
   constructor(private http: HttpClient) {}
 
@@ -34,22 +33,23 @@ export class CapsuleService {
     return this.http.get<Capsule[]>(this.apiUrl);
   }
 
+  getCapsuleById(id: number): Observable<Capsule> {
+    return this.http.get<Capsule>(`${this.apiUrl}/${id}`);
+  }
+
   createCapsule(capsule: NewCapsule): Observable<Capsule> {
     return this.http.post<Capsule>(this.apiUrl, capsule);
+  }
+
+  updateCapsule(id: number, capsule: Pick<NewCapsule, 'title' | 'unlockAt'>): Observable<Capsule> {
+    return this.http.put<Capsule>(`${this.apiUrl}/${id}`, capsule);
+  }
+
+  addMessage(id: number, message: string): Observable<Capsule> {
+    return this.http.patch<Capsule>(`${this.apiUrl}/${id}/messages`, { text: message });
   }
 
   deleteCapsule(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
-getCapsuleById(id: number): Observable<Capsule> {
-  return this.http.get<Capsule>(`${this.apiUrl}/${id}`);
 }
-
-addMessage(id: number, message: string): Observable<Capsule> {
-  return this.http.patch<Capsule>(`${this.apiUrl}/${id}/messages`, message, {
-    headers: { 'Content-Type': 'application/json' }
-  });
-}
-
-}
-
