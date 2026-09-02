@@ -56,6 +56,11 @@ Current database credential status:
 
 ## Build and tests
 
+Milestone 3 adds explicit verification scripts, commit-pinned non-deploying CI,
+active-source safety checks, and a Node version file. See
+[Release verification](docs/RELEASE_VERIFICATION.md) for reproducible commands,
+configuration boundaries, dependency debt, and the pending end-to-end checklist.
+
 ```bash
 npx tsc -p tsconfig.app.json --noEmit
 npm test -- --watch=false
